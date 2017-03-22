@@ -88,6 +88,7 @@ Soli Event Manager
 
 ## 测试
 
+    $ cd /path/to/soliphp/events/
     $ composer install
     $ phpunit
 
