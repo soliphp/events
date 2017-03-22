@@ -1,0 +1,27 @@
+{
+    "name": "soliphp/events",
+    "description": "Soli Event Manager",
+    "type": "library",
+    "keywords": ["event", "EventManager", "soliphp"],
+    "homepage": "https://github.com/soliphp/event-manager",
+    "support": {
+        "issues": "https://github.com/soliphp/event-manager/issues",
+        "source": "https://github.com/soliphp/event-manager"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ueaner",
+            "email": "ueaner@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Soli\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
