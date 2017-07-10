@@ -37,8 +37,7 @@ Soli Event Manager
         echo "应用已启动\n";
     });
 
-`监听器的格式`，只要是 [call_user_func_array] 允许的格式即可，
-也可以是包含与事件名称同名的实例化类。
+`监听器的格式`，可以是 `匿名函数或对象实例`。
 
 如，我们这里定义一个 `AppEvents` 类用于处理针对 `Application` 类的事件：
 
@@ -56,11 +55,14 @@ Soli Event Manager
     }
 
     // 注册事件监听
-    $eventManager->on('application:boot', array(new AppEvents, 'boot'));
-    也可以这样：
-    $eventManager->on('application:boot', new AppEvents);
 
-    或 call_user_func_array 支持的其他格式。
+    // 匿名函数
+    $eventManager->on('application:boot', function (Event $event, $application) {
+        echo "应用已启动\n";
+    });
+
+    // 对象实例
+    $eventManager->on('application:boot', new AppEvents);
 
 ### 聚合事件监听器到专门的事件类中进行处理
 
@@ -70,7 +72,7 @@ Soli Event Manager
 
     $eventManager->on('application', new AppEvents);
 
-这样我们便可以很方便的注册和整理不同纬度的不同事件。
+这样我们便可以很方便的注册和整理不同维度的不同事件。
 
 ### 触发事件
 
@@ -97,5 +99,4 @@ Soli Event Manager
 MIT Public License
 
 
-[Phalcon 框架的事件管理器]: https://docs.phalconphp.com/zh/latest/reference/events.html
-[call_user_func_array]: http://cn2.php.net/call_user_func_array
+[Phalcon 框架的事件管理器]: https://docs.phalconphp.com/en/latest/events
