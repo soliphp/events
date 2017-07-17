@@ -28,9 +28,9 @@ interface EventManagerInterface
      * 激活某个事件的监听器
      *
      * @param string $name
-     * @param object $source
+     * @param object $target
      * @param mixed  $data
      * @return mixed
      */
-    public function fire($name, $source, $data = null);
+    public function fire($name, $target, $data = null);
 }

@@ -71,12 +71,12 @@ class EventManager implements EventManagerInterface
      *</code>
      *
      * @param string $name 具体的某个事件名称，格式为： 事件分组类型:事件名称
-     * @param object $source 事件来源
+     * @param object $target 事件来源
      * @param mixed $data 事件相关数据
      * @return mixed
      * @throws \Exception
      */
-    public function fire($name, $source, $data = null)
+    public function fire($name, $target, $data = null)
     {
         if (!is_array($this->events)) {
             return null;
@@ -97,7 +97,7 @@ class EventManager implements EventManagerInterface
 
         // 以事件分组类型添加的事件
         if (isset($this->events[$eventSpace])) {
-            $event = new Event($eventName, $source, $data);
+            $event = new Event($eventName, $target, $data);
             $status = $event->fire($this->events[$eventSpace]);
         }
 
@@ -105,7 +105,7 @@ class EventManager implements EventManagerInterface
         if (isset($this->events[$name])) {
             // 在上一步事件分组类型的判断中没有实例化过 Event，才进行实例化
             if ($event === null) {
-                $event = new Event($eventName, $source, $data);
+                $event = new Event($eventName, $target, $data);
             }
             // 调用事件队列
             $status = $event->fire($this->events[$name]);

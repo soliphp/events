@@ -23,7 +23,7 @@ class Event
      *
      * @var object
      */
-    protected $source;
+    protected $target;
 
     /**
      * 事件相关数据
@@ -43,18 +43,18 @@ class Event
      * Event constructor.
      *
      * @param string $name
-     * @param object $source
+     * @param object $target
      * @param mixed $data
      * @throws \Exception
      */
-    public function __construct($name, $source, $data = null)
+    public function __construct($name, $target, $data = null)
     {
-        if (!is_string($name) || !is_object($source)) {
+        if (!is_string($name) || !is_object($target)) {
             throw new \Exception('Invalid parameter type.');
         }
 
         $this->name = $name;
-        $this->source = $source;
+        $this->target = $target;
 
         if ($data !== null) {
             $this->data = $data;
@@ -84,10 +84,10 @@ class Event
 
             if ($listener instanceof Closure) {
                 // 调用闭包监听器
-                $status = call_user_func_array($listener, [$this, $this->source, $this->data]);
+                $status = call_user_func_array($listener, [$this, $this->target, $this->data]);
             } elseif (method_exists($listener, $this->name)) {
                 // 调用对象监听器
-                $status = $listener->{$this->name}($this, $this->source, $this->data);
+                $status = $listener->{$this->name}($this, $this->target, $this->data);
             }
         }
 
