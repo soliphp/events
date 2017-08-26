@@ -9,7 +9,7 @@ use Soli\Tests\Data\Events\Observer;
 
 class EventTest extends TestCase
 {
-    public function testFire()
+    public function testTrigger()
     {
         $queue = [
             // Closure
@@ -22,7 +22,7 @@ class EventTest extends TestCase
 
         $event = new Event('notify', $this);
         // 最后一个监听者的返回值
-        $status = $event->fire($queue);
+        $status = $event->trigger($queue);
 
         $this->assertEquals('notify 2', $status);
     }

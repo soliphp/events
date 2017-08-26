@@ -22,7 +22,7 @@ namespace Soli\Events;
  * $eventManager->on('application', new AppEvents);
  *
  * // 触发某个具体事件
- * $eventManager->fire('application:boot', $this);
+ * $eventManager->trigger('application:boot', $this);
  *</pre>
  */
 class EventManager implements EventManagerInterface
@@ -39,7 +39,7 @@ class EventManager implements EventManagerInterface
      * 添加事件监听的命名规则为：
      * 如果 $name 不含有分号":"则认为是以分组的方式添加
      * 有分号则认为是为具体的某个事件添加监听器
-     * 此规则会在 fire 方法中体现
+     * 此规则会在 trigger 方法中体现
      *
      * @param string $name 事件名称，格式为：「事件分组类型:事件名称」
      *                     可以是事件分组类型，也可以是完整的事件名称
@@ -56,10 +56,13 @@ class EventManager implements EventManagerInterface
      *
      * @param string $name
      */
-    public function off($name)
+    public function off($name, $listener)
     {
         if (isset($this->events[$name])) {
-            unset($this->events[$name]);
+            $key = array_search($listener, $this->events[$name], true);
+            if ($key !== false) {
+                unset($this->events[$name][$key]);
+            }
         }
     }
 
@@ -67,7 +70,7 @@ class EventManager implements EventManagerInterface
      * 激活某个事件的监听器
      *
      *<code>
-     *  $eventManager->fire('dispatch:beforeDispatchLoop', $dispatcher);
+     * $eventManager->trigger('dispatch:beforeDispatchLoop', $dispatcher);
      *</code>
      *
      * @param string $name 具体的某个事件名称，格式为： 事件分组类型:事件名称
@@ -76,7 +79,7 @@ class EventManager implements EventManagerInterface
      * @return mixed
      * @throws \Exception
      */
-    public function fire($name, $target, $data = null)
+    public function trigger($name, $target = null, $data = null)
     {
         if (!is_array($this->events)) {
             return null;
@@ -98,7 +101,7 @@ class EventManager implements EventManagerInterface
         // 以事件分组类型添加的事件
         if (isset($this->events[$eventSpace])) {
             $event = new Event($eventName, $target, $data);
-            $status = $event->fire($this->events[$eventSpace]);
+            $status = $event->trigger($this->events[$eventSpace]);
         }
 
         // 以具体的事件名称添加的事件
@@ -108,25 +111,27 @@ class EventManager implements EventManagerInterface
                 $event = new Event($eventName, $target, $data);
             }
             // 调用事件队列
-            $status = $event->fire($this->events[$name]);
+            $status = $event->trigger($this->events[$name]);
         }
 
         return $status;
     }
 
     /**
-     * 检查某个事件是否已注册监听器
+     * 清除某个事件的监听器列表
      *
-     * @param string $name
-     * @return bool
+     * @param string $event
+     * @return void
      */
-    public function hasListeners($name)
+    public function clearListeners($name)
     {
-        return is_array($this->events) && isset($this->events[$name]);
+        if (is_array($this->events) && isset($this->events[$name])) {
+            unset($this->events[$name]);
+        }
     }
 
     /**
-     * 获取某个已知事件的监听器列表
+     * 获取某个事件的监听器列表
      *
      * @param string $name
      * @return array

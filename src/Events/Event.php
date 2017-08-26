@@ -68,7 +68,7 @@ class Event
      * @return mixed
      * @throws \Exception
      */
-    public function fire($queue)
+    public function trigger($queue)
     {
         if (!is_array($queue)) {
             throw new \Exception('The queue is not valid');
@@ -78,16 +78,16 @@ class Event
         $status = null;
 
         foreach ($queue as $listener) {
-            if ($this->isPropagationStopped()) {
-                break;
-            }
-
             if ($listener instanceof Closure) {
                 // 调用闭包监听器
                 $status = call_user_func_array($listener, [$this, $this->target, $this->data]);
             } elseif (method_exists($listener, $this->name)) {
                 // 调用对象监听器
                 $status = $listener->{$this->name}($this, $this->target, $this->data);
+            }
+
+            if ($this->isPropagationStopped()) {
+                break;
             }
         }
 

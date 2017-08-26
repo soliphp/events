@@ -22,7 +22,7 @@ interface EventManagerInterface
      *
      * @param string $name
      */
-    public function off($name);
+    public function off($name, $listener);
 
     /**
      * 激活某个事件的监听器
@@ -32,5 +32,5 @@ interface EventManagerInterface
      * @param mixed  $data
      * @return mixed
      */
-    public function fire($name, $target, $data = null);
+    public function trigger($name, $target, $data = null);
 }
