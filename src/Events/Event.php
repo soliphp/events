@@ -4,12 +4,12 @@
  */
 namespace Soli\Events;
 
-use Closure;
-
 /**
  * 事件原型
+ *
+ * @codeCoverageIgnore
  */
-class Event
+class Event implements EventInterface
 {
     /**
      * 事件名称，当事件监听器为对象时，事件名称对应事件监听器中的方法名
@@ -37,78 +37,59 @@ class Event
      *
      * @var bool
      */
-    protected $propagationStopped = false;
+    protected $stopped = false;
 
     /**
      * Event constructor.
      *
      * @param string $name
-     * @param object $target
+     * @param null|string|object $target
      * @param mixed $data
-     * @throws \Exception
      */
-    public function __construct($name, $target, $data = null)
+    public function __construct($name, $target = null, $data = null)
     {
-        if (!is_string($name) || !is_object($target)) {
-            throw new \Exception('Invalid parameter type.');
-        }
-
         $this->name = $name;
         $this->target = $target;
-
-        if ($data !== null) {
-            $this->data = $data;
-        }
+        $this->data = $data;
     }
 
-    /**
-     * 激活事件监听队列
-     *
-     * @param array $queue
-     * @return mixed
-     * @throws \Exception
-     */
-    public function trigger($queue)
+    public function getName()
     {
-        if (!is_array($queue)) {
-            throw new \Exception('The queue is not valid');
-        }
-
-        // 事件监听队列中最后一个监听器的执行状态
-        $status = null;
-
-        foreach ($queue as $listener) {
-            if ($listener instanceof Closure) {
-                // 调用闭包监听器
-                $status = call_user_func_array($listener, [$this, $this->target, $this->data]);
-            } elseif (method_exists($listener, $this->name)) {
-                // 调用对象监听器
-                $status = $listener->{$this->name}($this, $this->target, $this->data);
-            }
-
-            if ($this->isPropagationStopped()) {
-                break;
-            }
-        }
-
-        return $status;
+        return $this->name;
     }
 
-    /**
-     * Stops the propagation of the event to further event listeners.
-     */
+    public function getTarget()
+    {
+        return $this->target;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function setTarget($target)
+    {
+        $this->target = $target;
+    }
+
+    public function setData($data)
+    {
+        $this->data = $data;
+    }
+
     public function stopPropagation()
     {
-        $this->propagationStopped = true;
+        $this->stopped = true;
     }
 
-    /**
-     * Has this event indicated event propagation should stop?
-     *
-     * @return bool
-     */
     public function isPropagationStopped()
     {
-        return $this->propagationStopped;
+        return $this->stopped;
     }
 }

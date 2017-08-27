@@ -111,4 +111,24 @@ class EventManagerTest extends TestCase
         $listeners = $eventManager->getListeners('my-component:before');
         $this->assertTrue(empty($listeners));
     }
+
+    public function testStopPropagation()
+    {
+        $eventManager = new EventManager();
+
+        $before = function (Event $event, $eComponent) {
+            $event->stopPropagation();
+            return 'before listener return value.';
+        };
+
+        $before2 = function (Event $event, $eComponent) {
+            return 'Will not be executed.';
+        };
+
+        $eventManager->on('my-component:before', $before);
+        $eventManager->on('my-component:before', $before2);
+
+        $status = $eventManager->trigger('my-component:before');
+        $this->assertEquals('before listener return value.', $status);
+    }
 }

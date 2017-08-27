@@ -4,6 +4,8 @@
  */
 namespace Soli\Events;
 
+use Closure;
+
 /**
  * 事件管理器
  *
@@ -101,7 +103,7 @@ class EventManager implements EventManagerInterface
         // 以事件分组类型添加的事件
         if (isset($this->events[$eventSpace])) {
             $event = new Event($eventName, $target, $data);
-            $status = $event->trigger($this->events[$eventSpace]);
+            $status = $this->notify($this->events[$eventSpace], $event);
         }
 
         // 以具体的事件名称添加的事件
@@ -110,8 +112,42 @@ class EventManager implements EventManagerInterface
             if ($event === null) {
                 $event = new Event($eventName, $target, $data);
             }
-            // 调用事件队列
-            $status = $event->trigger($this->events[$name]);
+            // 通知事件监听者
+            $status = $this->notify($this->events[$name], $event);
+        }
+
+        return $status;
+    }
+
+    /**
+     * 激活事件监听队列
+     *
+     * @param array $queue
+     * @param EventInterface $event
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function notify(array $queue, $event)
+    {
+        // 事件监听队列中最后一个监听器的执行状态
+        $status = null;
+
+        $name = $event->getName();
+        $target = $event->getTarget();
+        $data = $event->getData();
+
+        foreach ($queue as $listener) {
+            if ($listener instanceof Closure) {
+                // 调用闭包监听器
+                $status = call_user_func_array($listener, [$event, $target, $data]);
+            } elseif (method_exists($listener, $name)) {
+                // 调用对象监听器
+                $status = $listener->{$name}($event, $target, $data);
+            }
+
+            if ($event->isPropagationStopped()) {
+                break;
+            }
         }
 
         return $status;

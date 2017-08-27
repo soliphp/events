@@ -26,17 +26,9 @@ interface EventInterface
     /**
      * Get parameters passed to the event
      *
-     * @return array
-     */
-    public function getParams();
-
-    /**
-     * Get a single parameter by name
-     *
-     * @param  string $name
      * @return mixed
      */
-    public function getParam($name);
+    public function getData();
 
     /**
      * Set the event name
@@ -57,17 +49,17 @@ interface EventInterface
     /**
      * Set event parameters
      *
-     * @param  array $params
+     * @param  array $data
      * @return void
      */
-    public function setParams(array $params);
+    public function setData($data);
 
     /**
      * Indicate whether or not to stop propagating this event
      *
-     * @param  bool $flag
+     * @return void
      */
-    public function stopPropagation($flag);
+    public function stopPropagation();
 
     /**
      * Has this event indicated event propagation should stop?
