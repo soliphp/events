@@ -30,7 +30,7 @@ class EventManagerTest extends TestCase
         };
 
         // 监听事件
-        $eventManager->on('my-component:before', $before);
+        $eventManager->attach('my-component:before', $before);
 
         $result = $eventManager->trigger('my-component:before', $eventManager);
         $this->assertStringStartsWith('before', $result);
@@ -40,7 +40,7 @@ class EventManagerTest extends TestCase
     {
         $eventManager = new EventManager;
 
-        $eventManager->on('my-component', new EComponentEvents());
+        $eventManager->attach('my-component', new EComponentEvents());
 
         $result = $eventManager->trigger('my-component:before', $eventManager);
         $this->assertNull($result);
@@ -70,7 +70,7 @@ class EventManagerTest extends TestCase
         };
 
         // 监听事件
-        $eventManager->on('my-component:before', $before);
+        $eventManager->attach('my-component:before', $before);
 
         $eventManager->trigger('invalidEventType', $eventManager);
     }
@@ -84,7 +84,7 @@ class EventManagerTest extends TestCase
         };
 
         // 监听事件
-        $eventManager->on('my-component:before', $before);
+        $eventManager->attach('my-component:before', $before);
 
         $eventManager->clearListeners('my-component:before');
 
@@ -100,13 +100,13 @@ class EventManagerTest extends TestCase
             return 'before';
         };
 
-        $eventManager->on('my-component:before', $before);
+        $eventManager->attach('my-component:before', $before);
 
         $listeners = $eventManager->getListeners('my-component:before');
         $this->assertFalse(empty($listeners));
 
-        // off
-        $eventManager->off('my-component:before', $before);
+        // detach
+        $eventManager->detach('my-component:before', $before);
 
         $listeners = $eventManager->getListeners('my-component:before');
         $this->assertTrue(empty($listeners));
@@ -125,8 +125,8 @@ class EventManagerTest extends TestCase
             return 'Will not be executed.';
         };
 
-        $eventManager->on('my-component:before', $before);
-        $eventManager->on('my-component:before', $before2);
+        $eventManager->attach('my-component:before', $before);
+        $eventManager->attach('my-component:before', $before2);
 
         $status = $eventManager->trigger('my-component:before');
         $this->assertEquals('before listener return value.', $status);

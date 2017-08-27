@@ -47,7 +47,7 @@ class EventManager implements EventManagerInterface
      *                     可以是事件分组类型，也可以是完整的事件名称
      * @param \Closure|object $listener 监听器（匿名函数、对象实例）
      */
-    public function on($name, $listener)
+    public function attach($name, $listener)
     {
         // 追加到事件队列
         $this->events[$name][] = $listener;
@@ -58,7 +58,7 @@ class EventManager implements EventManagerInterface
      *
      * @param string $name
      */
-    public function off($name, $listener)
+    public function detach($name, $listener)
     {
         if (isset($this->events[$name])) {
             $key = array_search($listener, $this->events[$name], true);

@@ -15,14 +15,14 @@ interface EventManagerInterface
      * @param string $name 事件名称
      * @param \Closure|object $listener 监听器
      */
-    public function on($name, $listener);
+    public function attach($name, $listener);
 
     /**
      * 移除某个/所有事件的监听器
      *
      * @param string $name
      */
-    public function off($name, $listener);
+    public function detach($name, $listener);
 
     /**
      * 激活某个事件的监听器

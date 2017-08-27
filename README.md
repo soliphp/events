@@ -33,7 +33,7 @@ Soli Event Manager
 
     $eventManager = new EventManager();
 
-    $eventManager->on('application:boot', function (Event $event, $application) {
+    $eventManager->attach('application:boot', function (Event $event, $application) {
         echo "应用已启动\n";
     });
 
@@ -57,12 +57,12 @@ Soli Event Manager
     // 注册事件监听
 
     // 匿名函数
-    $eventManager->on('application:boot', function (Event $event, $application) {
+    $eventManager->attach('application:boot', function (Event $event, $application) {
         echo "应用已启动\n";
     });
 
     // 对象实例
-    $eventManager->on('application:boot', new AppEvents);
+    $eventManager->attach('application:boot', new AppEvents);
 
 ### 聚合事件监听器到专门的事件类中进行处理
 
@@ -70,20 +70,20 @@ Soli Event Manager
 这两个方法可以直接用来监听 `application:boot` 事件和 `application:beforeSendResponse` 事件，
 注册方法很简单，如下：
 
-    $eventManager->on('application', new AppEvents);
+    $eventManager->attach('application', new AppEvents);
 
 这样我们便可以很方便的注册和整理不同维度的不同事件。
 
 ### 触发事件
 
-触发事件调用 `fire` 方法，其参数为具体的某个事件名称，事件源（当前类），
+触发事件调用 `trigger` 方法，其参数为具体的某个事件名称，事件源（当前类），
 也可以传入更多整合后的数据，供监听器使用。
 
-    $eventManager->fire('application:boot', $this, $extraData);
+    $eventManager->trigger('application:boot', $this, $extraData);
 
 ### 事件传播
 
-    $eventManager->on('application:boot', function (Event $event, $application) {
+    $eventManager->attach('application:boot', function (Event $event, $application) {
         // 终止事件传播，这样其他的侦听器就不会再收到此事件通知
         $event->stopPropagation();
     });
