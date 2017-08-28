@@ -19,7 +19,7 @@ interface EventInterface
     /**
      * Get target/context from which event was triggered
      *
-     * @return null|string|object
+     * @return object|string|null
      */
     public function getTarget();
 
@@ -40,7 +40,7 @@ interface EventInterface
     /**
      * Set the event target
      *
-     * @param null|string|object $target
+     * @param object|string $target
      */
     public function setTarget($target);
 

@@ -40,14 +40,10 @@ class EventManager implements EventManagerInterface
     protected $events;
 
     /**
-     * 注册某个事件的监听器，采用事件分组的方式
-     * 添加事件监听的命名规则为：
-     * 如果 $name 不含有分号":"则认为是以分组的方式添加
-     * 有分号则认为是为具体的某个事件添加监听器
-     * 此规则会在 trigger 方法中体现
+     * 注册某个事件的监听器
      *
-     * @param string $name 事件名称，格式为：「事件空间:事件名称」
-     *                     可以是事件空间，也可以是完整的事件名称
+     * @param string $name 完整的事件名称格式："事件空间:事件名称"
+     *                     这里可以是事件空间，也可以是完整的事件名称
      * @param object $listener 监听器（匿名函数、对象实例）
      */
     public function attach($name, $listener)
@@ -79,7 +75,7 @@ class EventManager implements EventManagerInterface
      * $eventManager->trigger('dispatch:beforeDispatchLoop', $dispatcher);
      *</code>
      *
-     * @param string $name 事件名称：「事件空间:事件名称」
+     * @param string $name 完整的事件名称格式："事件空间:事件名称"
      * @param object $target 事件来源
      * @param mixed $data 事件相关数据
      * @return mixed
