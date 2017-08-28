@@ -72,7 +72,44 @@ class EventManagerTest extends TestCase
         // 监听事件
         $eventManager->attach('my-component:before', $before);
 
+        $eventManager->trigger(new \stdClass(), $eventManager);
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testTriggerInvalidEventType2()
+    {
+        $eventManager = new EventManager();
+
+        $before = function (Event $event, $eComponent) {
+            return 'before';
+        };
+
+        // 监听事件
+        $eventManager->attach('my-component:before', $before);
+
         $eventManager->trigger('invalidEventType', $eventManager);
+    }
+
+    public function testTriggerEventInstance()
+    {
+        $eventManager = new EventManager();
+
+        $before = function (Event $event, $eComponent) {
+            return 'before';
+        };
+
+        $name = 'my-component:before';
+
+        // 监听事件
+        $eventManager->attach($name, $before);
+
+        $event = new Event($name, $this);
+
+        $result = $eventManager->trigger($event);
+
+        $this->assertStringStartsWith('before', $result);
     }
 
     public function testClearListeners()

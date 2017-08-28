@@ -42,7 +42,7 @@ class EventManager implements EventManagerInterface
     /**
      * 注册某个事件的监听器
      *
-     * @param string $name 完整的事件名称格式："事件空间:事件名称"
+     * @param string $name 完整的事件名称格式为 "事件空间:事件名称"
      *                     这里可以是事件空间，也可以是完整的事件名称
      * @param object $listener 监听器（匿名函数、对象实例）
      */
@@ -73,23 +73,30 @@ class EventManager implements EventManagerInterface
      *
      *<code>
      * $eventManager->trigger('dispatch:beforeDispatchLoop', $dispatcher);
+     *
+     * $event = new Event('application:boot', $app);
+     * $eventManager->trigger($event);
      *</code>
      *
-     * @param string $name 完整的事件名称格式："事件空间:事件名称"
-     * @param object $target 事件来源
+     * @param string|EventInterface $event 事件名称或事件对象实例
+     * @param object|string $target 事件来源
      * @param mixed $data 事件相关数据
      * @return mixed
      * @throws \InvalidArgumentException
      */
-    public function trigger($name, $target = null, $data = null)
+    public function trigger($event, $target = null, $data = null)
     {
         if (!is_array($this->events)) {
             return null;
         }
 
-        // 含有分号":"且不以分号开头，必须要指定具体调用的哪个事件
-        if (!strpos($name, ':')) {
-            throw new \InvalidArgumentException('Invalid event type ' . $name);
+        if (is_object($event) && $event instanceof EventInterface) {
+            $name = $event->getName();
+        } elseif (is_string($event) && strpos($event, ':')) {
+            $name = $event;
+            $event = null;
+        } else {
+            throw new \InvalidArgumentException('Invalid event type');
         }
 
         // 事件空间:事件名称
@@ -97,12 +104,13 @@ class EventManager implements EventManagerInterface
 
         // 事件监听队列中最后一个监听器的执行状态
         $status = null;
-        // Event 实例
-        $event = null;
 
         // 以事件空间添加的事件
         if (isset($this->events[$eventSpace])) {
-            $event = new Event($eventName, $target, $data);
+            // 未传入 Event 实例，实例化一个
+            if ($event === null) {
+                $event = new Event($name, $target, $data);
+            }
             $status = $this->notify($this->events[$eventSpace], $event);
         }
 
@@ -110,7 +118,7 @@ class EventManager implements EventManagerInterface
         if (isset($this->events[$name])) {
             // 在上一步事件空间的判断中没有实例化过 Event，才进行实例化
             if ($event === null) {
-                $event = new Event($eventName, $target, $data);
+                $event = new Event($name, $target, $data);
             }
             // 通知事件监听者
             $status = $this->notify($this->events[$name], $event);
@@ -135,13 +143,16 @@ class EventManager implements EventManagerInterface
         $target = $event->getTarget();
         $data = $event->getData();
 
+        // 事件空间:事件名称
+        list($eventSpace, $eventName) = explode(':', $name);
+
         foreach ($queue as $listener) {
             if ($listener instanceof Closure) {
                 // 调用闭包监听器
                 $status = call_user_func_array($listener, [$event, $target, $data]);
-            } elseif (method_exists($listener, $name)) {
+            } elseif (method_exists($listener, $eventName)) {
                 // 调用对象监听器
-                $status = $listener->{$name}($event, $target, $data);
+                $status = $listener->{$eventName}($event, $target, $data);
             }
 
             if ($event->isPropagationStopped()) {

@@ -12,7 +12,7 @@ namespace Soli\Events;
 class Event implements EventInterface
 {
     /**
-     * 事件名称，当事件监听器为对象时，事件名称对应事件监听器中的方法名
+     * 完整的事件名称，格式为 "事件空间:事件名称"
      *
      * @var string
      */
@@ -48,7 +48,7 @@ class Event implements EventInterface
      */
     public function __construct($name, $target = null, $data = null)
     {
-        $this->name = $name;
+        $this->setName($name);
         $this->target = $target;
         $this->data = $data;
     }
@@ -70,6 +70,10 @@ class Event implements EventInterface
 
     public function setName($name)
     {
+        // 含有分号":"且不以分号开头
+        if (!is_string($name) || !strpos($name, ':')) {
+            throw new \InvalidArgumentException('Invalid event type ' . $name);
+        }
         $this->name = $name;
     }
 
