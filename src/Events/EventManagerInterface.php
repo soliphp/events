@@ -12,25 +12,28 @@ interface EventManagerInterface
     /**
      * 注册某个事件的监听器
      *
-     * @param string $name 事件名称
-     * @param \Closure|object $listener 监听器
+     * @param string $name
+     * @param object $listener
      */
     public function attach($name, $listener);
 
     /**
-     * 移除某个/所有事件的监听器
+     * 移除某个事件的监听器
      *
      * @param string $name
+     * @param object $listener
      */
     public function detach($name, $listener);
 
     /**
-     * 激活某个事件的监听器
+     * 触发事件
      *
-     * @param string $name
-     * @param object $target
-     * @param mixed  $data
+     * 可以接受一个 EventInterface，如果没有传就会创建一个
+     *
+     * @param string|EventInterface $name
+     * @param object|string $target
+     * @param mixed $data
      * @return mixed
      */
-    public function trigger($name, $target, $data = null);
+    public function trigger($name, $target = null, $data = null);
 }

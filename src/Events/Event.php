@@ -21,7 +21,7 @@ class Event implements EventInterface
     /**
      * 事件来源
      *
-     * @var object
+     * @var object|string
      */
     protected $target;
 
@@ -33,7 +33,7 @@ class Event implements EventInterface
     protected $data;
 
     /**
-     * Whether no further event listeners should be triggered
+     * 是否停止触发未调用的监听器
      *
      * @var bool
      */
@@ -43,7 +43,7 @@ class Event implements EventInterface
      * Event constructor.
      *
      * @param string $name
-     * @param null|string|object $target
+     * @param string|object $target
      * @param mixed $data
      */
     public function __construct($name, $target = null, $data = null)

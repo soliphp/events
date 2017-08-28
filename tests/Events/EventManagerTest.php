@@ -103,7 +103,7 @@ class EventManagerTest extends TestCase
         $eventManager->attach('my-component:before', $before);
 
         $listeners = $eventManager->getListeners('my-component:before');
-        $this->assertFalse(empty($listeners));
+        $this->assertTrue($before === $listeners[0]);
 
         // detach
         $eventManager->detach('my-component:before', $before);

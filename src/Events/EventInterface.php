@@ -5,7 +5,7 @@
 namespace Soli\Events;
 
 /**
- * Representation of an event
+ * 事件接口
  */
 interface EventInterface
 {
@@ -33,31 +33,26 @@ interface EventInterface
     /**
      * Set the event name
      *
-     * @param  string $name
-     * @return void
+     * @param string $name
      */
     public function setName($name);
 
     /**
      * Set the event target
      *
-     * @param  null|string|object $target
-     * @return void
+     * @param null|string|object $target
      */
     public function setTarget($target);
 
     /**
-     * Set event parameters
+     * Set event data
      *
-     * @param  array $data
-     * @return void
+     * @param array $data
      */
     public function setData($data);
 
     /**
      * Indicate whether or not to stop propagating this event
-     *
-     * @return void
      */
     public function stopPropagation();
 
