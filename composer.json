@@ -18,6 +18,9 @@
     "require": {
         "php": ">=5.5.0"
     },
+    "provide": {
+        "psr/event-manager-implementation": "^1.0"
+    },
     "autoload": {
         "psr-4": {
             "Soli\\": "src/"
