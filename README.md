@@ -18,11 +18,11 @@ Soli Event Manager
 ## 命名约定
 
 当前事件管理器的命名规则采用分组的方式，目的是为了避免不同组件间的事件名称重名，产生碰撞，
-同时也便于对项目中同一维度的事件进行聚合整理；事件命名格式为 "component:event"，
+同时也便于对项目中同一维度的事件进行聚合整理；事件命名格式为 "component.event"，
 类比类的命名空间，我们暂且将这种对事件的命名方式称之为「事件命名空间」。
 
 如，我们有一个 `\Soli\Application` 类，它的事件命名空间可以定义为 "application"，
-对于此类 "boot" 事件的全名为 "application:boot"。
+对于此类 "boot" 事件的全名为 "application.boot"。
 
 ## 使用
 
@@ -33,7 +33,7 @@ Soli Event Manager
 
     $eventManager = new EventManager();
 
-    $eventManager->attach('application:boot', function (Event $event, $application) {
+    $eventManager->attach('application.boot', function (Event $event, $application) {
         echo "应用已启动\n";
     });
 
@@ -60,18 +60,18 @@ Soli Event Manager
     // 注册事件监听
 
     // 匿名函数
-    $eventManager->attach('application:boot', function (Event $event, $application) {
+    $eventManager->attach('application.boot', function (Event $event, $application) {
         $ver = $application::VERSION;
         echo "应用已启动 $ver\n";
     });
 
     // 对象实例
-    $eventManager->attach('application:boot', new AppEvents);
+    $eventManager->attach('application.boot', new AppEvents);
 
 ### 聚合事件监听器到专门的事件类中进行处理
 
 上面我们定义了 `AppEvents` 类，其中有两个方法 `boot` 和 `finish`，
-这两个方法可以直接用来监听 `application:boot` 事件和 `application:finish` 事件，
+这两个方法可以直接用来监听 `application.boot` 事件和 `application.finish` 事件，
 注册方法很简单，如下：
 
     $eventManager->attach('application', new AppEvents);
@@ -83,11 +83,11 @@ Soli Event Manager
 触发事件调用 `trigger` 方法，其参数为具体的某个事件名称，事件源（当前类），
 也可以传入更多整合后的数据，供监听器使用。
 
-    $eventManager->trigger('application:boot', $this, $extraData);
+    $eventManager->trigger('application.boot', $this, $extraData);
 
 ### 事件传播
 
-    $eventManager->attach('application:boot', function (Event $event, $application) {
+    $eventManager->attach('application.boot', function (Event $event, $application) {
         // 终止事件传播，这样其他的侦听器就不会再收到此事件通知
         $event->stopPropagation();
     });

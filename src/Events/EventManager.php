@@ -19,7 +19,7 @@ use Closure;
  * $eventManager = new EventManager();
  *
  * // 注册具体的某个事件监听器
- * $eventManager->attach('application:boot', function (Event $event, $application) {
+ * $eventManager->attach('application.boot', function (Event $event, $application) {
  *     echo "应用已启动\n";
  * });
  *
@@ -27,7 +27,7 @@ use Closure;
  * $eventManager->attach('application', new AppEvents);
  *
  * // 触发某个具体事件
- * $eventManager->trigger('application:boot', $this);
+ * $eventManager->trigger('application.boot', $this);
  *</pre>
  */
 class EventManager implements EventManagerInterface
@@ -42,7 +42,7 @@ class EventManager implements EventManagerInterface
     /**
      * 注册某个事件的监听器
      *
-     * @param string $name 完整的事件名称格式为 "事件空间:事件名称"
+     * @param string $name 完整的事件名称格式为 "事件空间.事件名称"
      *                     这里可以是事件空间，也可以是完整的事件名称
      * @param object $listener 监听器（匿名函数、对象实例）
      */
@@ -72,9 +72,9 @@ class EventManager implements EventManagerInterface
      * 触发事件
      *
      *<code>
-     * $eventManager->trigger('dispatch:beforeDispatchLoop', $dispatcher);
+     * $eventManager->trigger('dispatch.beforeDispatchLoop', $dispatcher);
      *
-     * $event = new Event('application:boot', $app);
+     * $event = new Event('application.boot', $app);
      * $eventManager->trigger($event);
      *</code>
      *
@@ -92,15 +92,15 @@ class EventManager implements EventManagerInterface
 
         if (is_object($event) && $event instanceof EventInterface) {
             $name = $event->getName();
-        } elseif (is_string($event) && strpos($event, ':')) {
+        } elseif (is_string($event) && strpos($event, Event::DELIMITER)) {
             $name = $event;
             $event = null;
         } else {
             throw new \InvalidArgumentException('Invalid event type');
         }
 
-        // 事件空间:事件名称
-        list($eventSpace, $eventName) = explode(':', $name);
+        // 事件空间.事件名称
+        list($eventSpace, $eventName) = explode(Event::DELIMITER, $name);
 
         // 事件监听队列中最后一个监听器的执行状态
         $status = null;
@@ -143,8 +143,8 @@ class EventManager implements EventManagerInterface
         $target = $event->getTarget();
         $data = $event->getData();
 
-        // 事件空间:事件名称
-        list($eventSpace, $eventName) = explode(':', $name);
+        // 事件空间.事件名称
+        list($eventSpace, $eventName) = explode(Event::DELIMITER, $name);
 
         foreach ($queue as $listener) {
             if ($listener instanceof Closure) {

@@ -30,9 +30,9 @@ class EventManagerTest extends TestCase
         };
 
         // 监听事件
-        $eventManager->attach('my-component:before', $before);
+        $eventManager->attach('my-component.before', $before);
 
-        $result = $eventManager->trigger('my-component:before', $eventManager);
+        $result = $eventManager->trigger('my-component.before', $eventManager);
         $this->assertStringStartsWith('before', $result);
     }
 
@@ -42,10 +42,10 @@ class EventManagerTest extends TestCase
 
         $eventManager->attach('my-component', new EComponentEvents());
 
-        $result = $eventManager->trigger('my-component:before', $eventManager);
+        $result = $eventManager->trigger('my-component.before', $eventManager);
         $this->assertNull($result);
 
-        $result = $eventManager->trigger('my-component:after', $eventManager);
+        $result = $eventManager->trigger('my-component.after', $eventManager);
         $this->assertStringStartsWith('after', $result);
     }
 
@@ -53,7 +53,7 @@ class EventManagerTest extends TestCase
     {
         $eventManager = new EventManager();
 
-        $result = $eventManager->trigger('events:empty', $eventManager);
+        $result = $eventManager->trigger('events.empty', $eventManager);
 
         $this->assertNull($result);
     }
@@ -70,7 +70,7 @@ class EventManagerTest extends TestCase
         };
 
         // 监听事件
-        $eventManager->attach('my-component:before', $before);
+        $eventManager->attach('my-component.before', $before);
 
         $eventManager->trigger(new \stdClass(), $eventManager);
     }
@@ -87,7 +87,7 @@ class EventManagerTest extends TestCase
         };
 
         // 监听事件
-        $eventManager->attach('my-component:before', $before);
+        $eventManager->attach('my-component.before', $before);
 
         $eventManager->trigger('invalidEventType', $eventManager);
     }
@@ -100,7 +100,7 @@ class EventManagerTest extends TestCase
             return 'before';
         };
 
-        $name = 'my-component:before';
+        $name = 'my-component.before';
 
         // 监听事件
         $eventManager->attach($name, $before);
@@ -121,11 +121,11 @@ class EventManagerTest extends TestCase
         };
 
         // 监听事件
-        $eventManager->attach('my-component:before', $before);
+        $eventManager->attach('my-component.before', $before);
 
-        $eventManager->clearListeners('my-component:before');
+        $eventManager->clearListeners('my-component.before');
 
-        $listeners = $eventManager->getListeners('my-component:before');
+        $listeners = $eventManager->getListeners('my-component.before');
         $this->assertTrue(empty($listeners));
     }
 
@@ -137,15 +137,15 @@ class EventManagerTest extends TestCase
             return 'before';
         };
 
-        $eventManager->attach('my-component:before', $before);
+        $eventManager->attach('my-component.before', $before);
 
-        $listeners = $eventManager->getListeners('my-component:before');
+        $listeners = $eventManager->getListeners('my-component.before');
         $this->assertTrue($before === $listeners[0]);
 
         // detach
-        $eventManager->detach('my-component:before', $before);
+        $eventManager->detach('my-component.before', $before);
 
-        $listeners = $eventManager->getListeners('my-component:before');
+        $listeners = $eventManager->getListeners('my-component.before');
         $this->assertTrue(empty($listeners));
     }
 
@@ -162,10 +162,10 @@ class EventManagerTest extends TestCase
             return 'Will not be executed.';
         };
 
-        $eventManager->attach('my-component:before', $before);
-        $eventManager->attach('my-component:before', $before2);
+        $eventManager->attach('my-component.before', $before);
+        $eventManager->attach('my-component.before', $before2);
 
-        $status = $eventManager->trigger('my-component:before');
+        $status = $eventManager->trigger('my-component.before');
         $this->assertEquals('before listener return value.', $status);
     }
 }
