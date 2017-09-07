@@ -137,9 +137,9 @@ Soli Event Manager
 且假如第2条 $argv 不做参数类型的更改，get/setParams、getParam 三个接口
 并不能直接体现 $argv 为 object 时的情况，是选择 getParam() 还是 getParams()
 方法获取 $argv 参数，会疑惑开发者 array 时用 getParams()，而 object 时用
-getParams()，而事实上 getParam() 仅仅是获取参数类型为 array 时的单个元素，
-那 object 是想怎么获取？这样的接口体验还不如直接使用 getData()
-一个方法，交给开发者自己来处理。
+getParam()，而事实上 getParam() 仅仅是获取参数类型为 array 时的单个元素，
+那 object 是想怎么获取？这样的接口体验远不如直接使用 getData()
+一个方法，交给开发者来处理具体的数据类型问题。
 
 ## 测试
 
