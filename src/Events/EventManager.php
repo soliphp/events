@@ -166,7 +166,7 @@ class EventManager implements EventManagerInterface
     /**
      * 清除某个事件的监听器列表
      *
-     * @param string $event
+     * @param string $name
      * @return void
      */
     public function clearListeners($name)
