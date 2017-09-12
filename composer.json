@@ -3,10 +3,10 @@
     "description": "Soli Event Manager",
     "type": "library",
     "keywords": ["event", "EventManager", "soliphp"],
-    "homepage": "https://github.com/soliphp/event-manager",
+    "homepage": "https://github.com/soliphp/events",
     "support": {
-        "issues": "https://github.com/soliphp/event-manager/issues",
-        "source": "https://github.com/soliphp/event-manager"
+        "issues": "https://github.com/soliphp/events/issues",
+        "source": "https://github.com/soliphp/events"
     },
     "license": "MIT",
     "authors": [
@@ -30,6 +30,5 @@
         "psr-4": {
             "Soli\\Tests\\": "tests/"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
