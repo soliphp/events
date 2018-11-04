@@ -12,12 +12,7 @@ namespace Soli\Events;
 class Event implements EventInterface
 {
     /**
-     * 事件名称分隔符
-     */
-    const DELIMITER = '.';
-
-    /**
-     * 完整的事件名称，格式为 "事件空间.事件名称"
+     * 事件名称
      *
      * @var string
      */
@@ -75,7 +70,7 @@ class Event implements EventInterface
 
     public function setName($name)
     {
-        if (!is_string($name) || !strpos($name, Event::DELIMITER)) {
+        if (!is_string($name)) {
             throw new \InvalidArgumentException('Invalid event type ' . $name);
         }
         $this->name = $name;

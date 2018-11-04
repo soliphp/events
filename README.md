@@ -1,28 +1,17 @@
 Soli Event Manager
 ------------------
 
-当前项目参考 [Phalcon 框架的事件管理器]实现。
+事件管理器，管理事件的注册、删除和调度(触发)。
 
-事件管理器的目的是为了通过创建"钩子"拦截框架或应用中的部分组件操作。
-
-这些钩子允许开发者获得状态信息，操纵数据或者改变某个组件进程中的执行流向。
-
-以上介绍摘自[Phalcon 框架的事件管理器]官方文档。
+[![Build Status](https://travis-ci.org/soliphp/events.svg?branch=master)](https://travis-ci.org/soliphp/events)
+[![Coverage Status](https://coveralls.io/repos/github/soliphp/events/badge.svg?branch=master)](https://coveralls.io/github/soliphp/events?branch=master)
+[![License](https://poser.pugx.org/soliphp/events/license)](https://packagist.org/packages/soliphp/events)
 
 ## 安装
 
 使用 `composer` 安装到你的项目：
 
     composer require soliphp/events
-
-## 命名约定
-
-当前事件管理器的命名规则采用分组的方式，目的是为了避免不同组件间的事件名称重名，产生碰撞，
-同时也便于对项目中同一维度的事件进行聚合整理；事件命名格式为 "component.event"，
-类比类的命名空间，我们暂且将这种对事件的命名方式称之为「事件命名空间」。
-
-如，我们有一个 `\Soli\Application` 类，它的事件命名空间可以定义为 "application"，
-对于此类 "boot" 事件的全名为 "application.boot"。
 
 ## 使用
 
@@ -33,17 +22,17 @@ Soli Event Manager
 
     $eventManager = new EventManager();
 
-    $eventManager->attach('application.boot', function (Event $event, $application) {
+    $eventManager->attach('app.boot', function (Event $event, $app) {
         echo "应用已启动\n";
     });
 
 `监听器的格式`，可以是 `匿名函数或对象实例`。
 
-如，我们这里定义一个 `AppEvents` 类用于处理针对 `Application` 类的事件：
+如，我们这里定义一个 `AppEvents` 类用于处理针对 `App` 类的事件：
 
     class AppEvents
     {
-        public function boot(Event $event, $application)
+        public function boot(Event $event, $app)
         {
             // 导出内部（事件）数据或状态给外部（监听器）调用者
             $data = $event->getData();
@@ -51,7 +40,7 @@ Soli Event Manager
             echo "应用已启动\n";
         }
 
-        public function finish(Event $event, $application, $extraData)
+        public function finish(Event $event, $app, $data)
         {
             echo "应用执行结束\n";
         }
@@ -60,21 +49,21 @@ Soli Event Manager
     // 注册事件监听
 
     // 匿名函数
-    $eventManager->attach('application.boot', function (Event $event, $application) {
-        $ver = $application::VERSION;
+    $eventManager->attach('app.boot', function (Event $event, $app) {
+        $ver = $app::VERSION;
         echo "应用已启动 $ver\n";
     });
 
     // 对象实例
-    $eventManager->attach('application.boot', new AppEvents);
+    $eventManager->attach('app.boot', new AppEvents);
 
 ### 聚合事件监听器到专门的事件类中进行处理
 
 上面我们定义了 `AppEvents` 类，其中有两个方法 `boot` 和 `finish`，
-这两个方法可以直接用来监听 `application.boot` 事件和 `application.finish` 事件，
+这两个方法可以直接用来监听 `app.boot` 事件和 `app.finish` 事件，
 注册方法很简单，如下：
 
-    $eventManager->attach('application', new AppEvents);
+    $eventManager->attach('app', new AppEvents);
 
 这样我们便可以很方便的注册和整理不同维度的不同事件。
 
@@ -83,11 +72,11 @@ Soli Event Manager
 触发事件调用 `trigger` 方法，其参数为具体的某个事件名称，事件源（当前类），
 也可以传入更多整合后的数据，供监听器使用。
 
-    $eventManager->trigger('application.boot', $this, $extraData);
+    $eventManager->trigger('app.boot', $this, $data);
 
 ### 事件传播
 
-    $eventManager->attach('application.boot', function (Event $event, $application) {
+    $eventManager->attach('app.boot', function (Event $event, $app) {
         // 终止事件传播，这样其他的侦听器就不会再收到此事件通知
         $event->stopPropagation();
     });

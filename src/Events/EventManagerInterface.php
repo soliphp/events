@@ -33,7 +33,7 @@ interface EventManagerInterface
      * @param string|EventInterface $event 事件名称或事件对象实例
      * @param object|string $target 事件来源
      * @param mixed $data 事件相关数据
-     * @return mixed
+     * @return bool 是否执行了当前事件的监听器
      */
     public function trigger($event, $target = null, $data = null);
 }

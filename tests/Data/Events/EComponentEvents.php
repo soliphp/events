@@ -8,6 +8,6 @@ class EComponentEvents
 {
     public function after(Event $event, $myComponent)
     {
-        return 'after';
+        echo 'after';
     }
 }

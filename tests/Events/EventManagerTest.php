@@ -14,8 +14,8 @@ class EventManagerTest extends TestCase
 {
     public function testTrait()
     {
-        $eventManager = new EventManager;
-        $eComponent = new EComponent;
+        $eventManager = new EventManager();
+        $eComponent = new EComponent();
 
         $eComponent->setEventManager($eventManager);
 
@@ -24,39 +24,65 @@ class EventManagerTest extends TestCase
 
     public function testTriggerByClosure()
     {
-        $eventManager = new EventManager;
+        $expected = 'before';
+        $this->expectOutputString($expected);
 
-        $before = function (Event $event, $eComponent) {
-            return 'before';
+        $eventManager = new EventManager();
+
+        $before = function (Event $event) use ($expected) {
+            echo $expected;
         };
 
         // 监听事件
-        $eventManager->attach('my-component.before', $before);
+        $eventManager->attach('before', $before);
 
-        $result = $eventManager->trigger('my-component.before', $eventManager);
-        $this->assertStringStartsWith('before', $result);
+        $status = $eventManager->trigger('before');
+        $this->assertTrue($status);
     }
 
     public function testTriggerByInstance()
     {
-        $eventManager = new EventManager;
+        $expected = 'after';
+        $this->expectOutputString($expected);
+
+        $eventManager = new EventManager();
 
         $eventManager->attach('my-component', new EComponentEvents());
 
-        $result = $eventManager->trigger('my-component.before', $eventManager);
-        $this->assertNull($result);
+        $r = $eventManager->trigger('my-component.before');
+        $this->assertFalse($r);
 
-        $result = $eventManager->trigger('my-component.after', $eventManager);
-        $this->assertStringStartsWith('after', $result);
+        $r = $eventManager->trigger('my-component.after');
+        $this->assertTrue($r);
+    }
+
+    public function testTriggerByClosureAndInstance()
+    {
+        $expected = 'after';
+        $this->expectOutputString($expected . $expected);
+
+        $eventManager = new EventManager();
+
+        $after = function (Event $event) use ($expected) {
+            echo $expected;
+        };
+
+        // 监听事件
+        $eventManager->attach('my-component.after', $after);
+
+        $eventManager->attach('my-component', new EComponentEvents());
+
+        $status = $eventManager->trigger('my-component.after');
+        $this->assertTrue($status);
     }
 
     public function testTriggerEmptyEvents()
     {
         $eventManager = new EventManager();
 
-        $result = $eventManager->trigger('events.empty', $eventManager);
+        $r = $eventManager->trigger('events.empty');
 
-        $this->assertNull($result);
+        $this->assertFalse($r);
     }
 
     /**
@@ -92,15 +118,18 @@ class EventManagerTest extends TestCase
         // 监听事件
         $eventManager->attach('my-component.before', $before);
 
-        $eventManager->trigger('invalidEventType', $eventManager);
+        $eventManager->trigger(1234, $eventManager);
     }
 
     public function testTriggerEventInstance()
     {
+        $expected = 'before';
+        $this->expectOutputString($expected);
+
         $eventManager = new EventManager();
 
-        $before = function (Event $event, $eComponent) {
-            return 'before';
+        $before = function (Event $event) use ($expected) {
+            echo $event->getData();
         };
 
         $name = 'my-component.before';
@@ -110,9 +139,9 @@ class EventManagerTest extends TestCase
 
         $event = new Event($name, $this);
 
-        $result = $eventManager->trigger($event);
+        $r = $eventManager->trigger($event, $this, $expected);
 
-        $this->assertStringStartsWith('before', $result);
+        $this->assertTrue($r);
     }
 
     public function testClearListeners()
@@ -154,21 +183,24 @@ class EventManagerTest extends TestCase
 
     public function testStopPropagation()
     {
+        $expected = 'before listener return value.';
+        $this->expectOutputString($expected);
+
         $eventManager = new EventManager();
 
-        $before = function (Event $event, $eComponent) {
+        $before = function (Event $event) use ($expected) {
             $event->stopPropagation();
-            return 'before listener return value.';
+            echo $expected;
         };
 
-        $before2 = function (Event $event, $eComponent) {
-            return 'Will not be executed.';
+        $before2 = function (Event $event) {
+            echo 'Will not be executed.';
         };
 
         $eventManager->attach('my-component.before', $before);
         $eventManager->attach('my-component.before', $before2);
 
-        $status = $eventManager->trigger('my-component.before');
-        $this->assertEquals('before listener return value.', $status);
+        $r = $eventManager->trigger('my-component.before');
+        $this->assertTrue($r);
     }
 }
