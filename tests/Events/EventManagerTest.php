@@ -91,6 +91,8 @@ class EventManagerTest extends TestCase
      */
     public function testTriggerInvalidEventType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $eventManager = new EventManager();
 
         $before = function (Event $event, $eComponent) {
@@ -109,6 +111,8 @@ class EventManagerTest extends TestCase
      */
     public function testTriggerInvalidEventType2()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $eventManager = new EventManager();
 
         $before = function (Event $event, $eComponent) {
